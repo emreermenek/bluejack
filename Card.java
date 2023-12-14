@@ -5,6 +5,6 @@ public class Card{
     Card(String color,int value, String sign){
         this.color = color;
         this.value = value;
-        this.sign = "+";
+        this.sign = sign;
     }
 }

@@ -1,12 +1,16 @@
 public class Player {
     String name;
-    Card[] hand;
-    SpecialCard[] specialCard;
+    int winRate;
+    Card playerDeck;
+    Card[] extraCards = new Card[3];
+    String specialCard;
 
-    Player(String name, Card[] hand, SpecialCard[] specialCards){
+    Player(String name, int winRate, Card playerDeck,Card[] extraCards, String specialCard){
         this.name = name;
-        this.hand = hand;
-        this.specialCard = specialCards;
+        this.winRate = winRate;
+        this.playerDeck = playerDeck;
+        this.extraCards = extraCards;
+        this.specialCard = specialCard;
     }
 
 }
