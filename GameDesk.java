@@ -43,10 +43,42 @@ public class GameDesk {
         int[] values = {1,2,3,4,5,6};
         Card[] extraCards = new Card[3];
         Random random = new Random();
-
         for(int i = 0; i<3;i++){
-            extraCards[i] = new Card(colors[random.nextInt(3)],values[random.nextInt(6)],signs[random.nextInt(2)]);
+            extraCards[i] = new Card(colors[random.nextInt(4)],values[random.nextInt(6)],signs[random.nextInt(2)]);
         }
         return extraCards;
+    }
+       public static Card createSecondExtraCard(){
+        String[] colors = {"red","blue","yellow","green"};
+        String[] signs = {"-","+"};
+        int[] values = {1,2,3,4,5,6};
+        Random random = new Random();
+        Card extraCard = new Card(colors[random.nextInt(4)],values[random.nextInt(6)],signs[random.nextInt(2)]);
+        return extraCard;
+    }
+    public static Card specialCard(){
+        Random random = new Random();
+        double probability = random.nextDouble();
+        if(probability<0.20){
+            if(probability<0.10){
+                 return new Card("",0,"x2");
+            }else{
+                 return new Card("",0,"+/-");
+            }
+        }else{
+            return createSecondExtraCard();
+        }
+    }
+     public static int[] removeElement(int[] array, int index) {
+        int[] newArray = new int[array.length-1];
+        for(int i=0; i<array.length;i++){
+             if(i<index){
+                newArray[i] = array[i];
+            }
+            else if(i>index){
+                newArray[i-1] = array[i];
+             }
+}
+        return newArray;
     }
 }
