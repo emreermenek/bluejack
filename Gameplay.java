@@ -92,7 +92,7 @@ public class Gameplay {
         }while(name.length()>10);
         System.out.println("Welcome the game "+ name + "Game started...You draw your first card.");
        
-    
+        
         //gameplay
         while (!isGameEnd) {
             if(playerWin==3){
@@ -149,9 +149,6 @@ public class Gameplay {
         }
         do {
             while (!isComputerPlay) {
-                if(isPlayerStand){
-
-                }
                 if(playerTotal>20){
                     break;
                 }
@@ -210,9 +207,9 @@ public class Gameplay {
              if(isComputerStand==false){
              boolean done = false;
         while (!done) {
-            System.out.print("1-End Turn\n2-Use Special Card\n3-Stand\nEnter your move: ");
-            int playerMove = sc.nextInt();
             try {
+                  System.out.print("1-End Turn\n2-Use Special Card\n3-Stand\nEnter your move: ");
+                    int playerMove = sc.nextInt();
                 if(playerMove==1){
                      if(playerTotal>20){
                     isComputerPlay = true;
@@ -234,9 +231,9 @@ public class Gameplay {
                         }
                         
                     }
-                    System.out.print("Choose a special card: ");
-                    int playerSpecialMove = sc.nextInt();
                     try {
+                        System.out.print("Choose a special card: ");
+                        int playerSpecialMove = sc.nextInt();
                         boolean done3 = false;
                         for(int i = 0;i<playerStartHandCards.length;i++){
                             while (!done3) {
@@ -299,9 +296,8 @@ public class Gameplay {
                             }
                                                  
                         }
-                          
                     } catch (Exception e) {
-                       sc.nextInt();
+                        sc.nextLine();
                     }   
                     }
 
@@ -314,16 +310,17 @@ public class Gameplay {
                 }
                 break;
             } catch (Exception e) {
+                sc.nextLine();
                 System.out.println("Enter number between 1-3");
             }
-            break;
+           
         }
         }else{
              boolean done = false;
         while (!done) {
-            System.out.print("1-End Turn\n2-Use Special Card\n3-Stand\nEnter your move: ");
-            int playerMove = sc.nextInt();
             try {
+                System.out.print("1-End Turn\n2-Use Special Card\n3-Stand\nEnter your move: ");
+                int playerMove = sc.nextInt();
                 if(playerMove==1){
                      if(playerTotal>20){
                     isComputerPlay = true;
@@ -408,7 +405,7 @@ public class Gameplay {
                         }
                           break;
                     } catch (Exception e) {
-                       sc.nextInt();
+                       sc.nextLine();
                     }   
                     }
 
@@ -420,6 +417,7 @@ public class Gameplay {
                     break;
                 }
             } catch (Exception e) {
+                sc.nextLine();
                 System.out.println("Enter number between 1-3");
             }
         }
