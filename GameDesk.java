@@ -81,18 +81,18 @@ public class GameDesk {
     }
         return newArray;
     }
-      public static Card[] removeCardElement(Card[] array, int index) {
-        Card[] newArray = new Card[array.length-1];
-        for(int i=0; i<array.length;i++){
-             if(i<index){
-                newArray[i] = array[i];
-            }
-            else if(i>index){
-                newArray[i-1] = array[i];
-             }
-    }
+    public static Card[] removeCardElement(Card[] array, int index) {
+        if (index < 0 || index >= array.length) {
+            return array;
+        }
+        Card[] newArray = new Card[array.length - 1];
+        
+        System.arraycopy(array, 0, newArray, 0, index);
+        System.arraycopy(array, index + 1, newArray, index, newArray.length - index);
+    
         return newArray;
     }
+    
     public static String changeSignBoard(String board){
         int index = board.lastIndexOf("+");
         char[] charArray = board.toCharArray();
@@ -105,25 +105,18 @@ public class GameDesk {
         chars[index] = replacement;
         return new String(chars);
     }
-    public static String doubleLastNumber(String inputString) {
-        // Split the string into words
-        String[] words = inputString.split("\\s+");
 
-        // Find the last word that represents a number
-        for (int i = words.length - 1; i >= 0; i--) {
-            String word = words[i];
-            if (word.matches("\\d+")) {
-                // Convert the number to an integer and double it
-                int originalNumber = Integer.parseInt(word);
-                int doubledNumber = originalNumber * 2;
-
-                // Replace the original number with its doubled version in the string
-                words[i] = Integer.toString(doubledNumber);
-                break;  // Stop after replacing the last number
+    public static String removeHandCard(Card[] playerStartHandCards,String hand,int i){
+        String target = "";
+        if(playerStartHandCards[i].sign == "+" || playerStartHandCards[i].sign == "-"){
+            target = playerStartHandCards[i].color + " " + playerStartHandCards[i].sign + playerStartHandCards[i].value;
+        }else{
+            if(playerStartHandCards[i].sign == "+/-"){
+                target = playerStartHandCards[i].sign;
+            }else{
+                target = playerStartHandCards[i].sign;
             }
         }
-
-        // Join the words back into a string
-        return String.join(" ", words);
+        return hand.replaceAll(target, "");
     }
 }

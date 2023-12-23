@@ -27,12 +27,11 @@ public class Gameplay {
         Boolean isPlayerPlay = false;
         Boolean isComputerPlay = true;
         Boolean isRoundFinished = false;
-        Boolean isMoveTrue = false;
         Boolean isPlayerStand = false;
         Boolean isComputerStand = false;
-        Boolean isSpecialCardPlayed = false;
-        Boolean isBlueJack = false;
-        String[] computerSpecialCards = new String[2];
+        Boolean isBluejack = false;
+        String[] computerColors = new String[7];
+        String[] playerColors = new String[7];
         int gameCount = 1;
         for(int i = 0;i<5;i++){
             playerHandCards[i] = gameDesk[i];
@@ -82,7 +81,7 @@ public class Gameplay {
             list2 = GameDesk.removeElement(list2, y);
         }
    
-        
+        //name
         do{
             try {
                  System.out.print("Please enter your name(max 10 character): ");
@@ -92,11 +91,30 @@ public class Gameplay {
             }   
         }while(name.length()>10);
         System.out.println("Welcome the game "+ name + "Game started...You draw your first card.");
-        System.out.println("----------Scoreboard----------\n"+"     Computer: " + String.valueOf(computerWin) + ", " + name + ": " + String.valueOf(playerWin) + "\n----------Scoreboard----------\n" );
-
+       
     
         //gameplay
-       while (!isRoundFinished) {
+        while (!isGameEnd) {
+            if(playerWin==3){
+                System.out.println("YOU WIN!!!");
+                break;
+            }
+            if(computerWin==3){
+                System.out.println("COMPUTER WIN!!!");
+                break;
+            }
+            computerBoard = "";
+            playerBoard = "";
+            playerTotal = 0;
+            computerTotal = 0;
+             isPlayerPlay = false;
+            isComputerPlay = true;
+            isRoundFinished = false;
+            isPlayerStand = false;
+            isComputerStand = false;
+            System.out.println("----------Scoreboard----------\n"+"     Computer: " + String.valueOf(computerWin) + ", " + name + ": " + String.valueOf(playerWin) + "\n----------Scoreboard----------\n" );
+
+        while (!isRoundFinished) {
         if(isPlayerStand!= true && playerTotal>20){
             System.out.println("computer winned "+ gameCount +". tour!");
                 computerWin++;
@@ -137,7 +155,7 @@ public class Gameplay {
                 if(playerTotal>20){
                     break;
                 }
-                computerBoard += gameDesk[cardCount].color + " "+ gameDesk[cardCount].sign + gameDesk[cardCount].value + " ";
+            computerBoard += gameDesk[cardCount].color + " "+ gameDesk[cardCount].sign + gameDesk[cardCount].value + " ";
             computerTotal += gameDesk[cardCount].value;
             String computerMove = Computer.computerMove(computerTotal, isPlayerStand, playerTotal, gameDesk[cardCount], computerStartHandCards);
             cardCount++;
@@ -153,24 +171,24 @@ public class Gameplay {
                     if(Integer.toString(i)==computerMove){
                         if(computerStartHandCards[i].sign=="-"){
                            computerTotal -=  computerStartHandCards[i].value;
-                           GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
-                           GameDesk.removeCardElement(computerStartHandCards, i);
+                            computerHand=GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
+                          computerStartHandCards=GameDesk.removeCardElement(computerStartHandCards, i);
                             break;
                            }else if(computerStartHandCards[i].sign=="+"){
                            computerTotal +=  computerStartHandCards[i].value;
-                           GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
-                           GameDesk.removeCardElement(computerStartHandCards, i);
+                           computerHand=GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
+                           computerStartHandCards=GameDesk.removeCardElement(computerStartHandCards, i);
                             break;
                            }else if(computerStartHandCards[i].sign=="+/-"){
                            computerTotal -=  (gameDesk[cardCount-1].value)*2;
-                           GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
-                           GameDesk.removeCardElement(computerStartHandCards, i);
+                            computerHand=GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
+                           computerStartHandCards=GameDesk.removeCardElement(computerStartHandCards, i);
                             computerBoard = GameDesk.changeSignBoard(computerBoard);
                             break;
                            }else if(computerStartHandCards[i].sign=="x2"){
                             computerTotal +=  gameDesk[cardCount-1].value;
-                            GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
-                            GameDesk.removeCardElement(computerStartHandCards, i);
+                             computerHand=GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
+                            computerStartHandCards=GameDesk.removeCardElement(computerStartHandCards, i);
                             break;
                            }
                     }
@@ -223,13 +241,14 @@ public class Gameplay {
                         for(int i = 0;i<playerStartHandCards.length;i++){
                             while (!done3) {
                                 if(i == playerSpecialMove-1){
+                                    playerHand = GameDesk.removeHandCard(playerStartHandCards, playerHand, i);
                             if(playerStartHandCards[i].sign=="-"){
                              playerTotal -= playerStartHandCards[i].value;
                             playerBoard += playerStartHandCards[i].color + " " + "-" + playerStartHandCards[i].value + " ";
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
-                            GameDesk.removeCardElement(playerStartHandCards, i);
+                            playerStartHandCards= GameDesk.removeCardElement(playerStartHandCards, i);
                             isComputerPlay = false;
                             isPlayerPlay=true;
                               done = true;
@@ -242,7 +261,7 @@ public class Gameplay {
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
-                              GameDesk.removeCardElement(playerStartHandCards, i);
+                            playerStartHandCards= GameDesk.removeCardElement(playerStartHandCards, i);
                             isComputerPlay = false;
                             isPlayerPlay=true;
                               done = true;
@@ -255,7 +274,7 @@ public class Gameplay {
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
-                            GameDesk.removeCardElement(playerStartHandCards, i);
+                            playerStartHandCards= GameDesk.removeCardElement(playerStartHandCards, i);
                             isComputerPlay = false;
                             isPlayerPlay=true;
                               done = true;
@@ -267,7 +286,7 @@ public class Gameplay {
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
-                             GameDesk.removeCardElement(playerStartHandCards, i);
+                            playerStartHandCards= GameDesk.removeCardElement(playerStartHandCards, i);
                             isComputerPlay = false;
                             isPlayerPlay=true;
                               done = true;
@@ -333,13 +352,14 @@ public class Gameplay {
                         for(int i = 0;i<playerStartHandCards.length;i++){
                             while (!done3) {
                                 if(i == playerSpecialMove-1){
+                                      playerHand = GameDesk.removeHandCard(playerStartHandCards, playerHand, i);
                             if(playerStartHandCards[i].sign=="-"){
                              playerTotal -= playerStartHandCards[i].value;
                             playerBoard += playerStartHandCards[i].color + " " + "-" + playerStartHandCards[i].value + " ";
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
-                            GameDesk.removeCardElement(playerStartHandCards, i);
+                            playerStartHandCards= GameDesk.removeCardElement(playerStartHandCards, i);
                             isPlayerStand=true;
                             isPlayerPlay=true;
                             done3=true;
@@ -350,7 +370,7 @@ public class Gameplay {
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
-                              GameDesk.removeCardElement(playerStartHandCards, i);
+                            playerStartHandCards= GameDesk.removeCardElement(playerStartHandCards, i);
                            isPlayerStand=true;
                             isPlayerPlay=true;
                             done3=true;
@@ -360,7 +380,7 @@ public class Gameplay {
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
-                              GameDesk.removeCardElement(playerStartHandCards, i);
+                            playerStartHandCards= GameDesk.removeCardElement(playerStartHandCards, i);
                                playerBoard = GameDesk.changeSignBoard(playerBoard);
                             isPlayerStand=true;
                             isPlayerPlay=true;
@@ -371,7 +391,7 @@ public class Gameplay {
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
-                             GameDesk.removeCardElement(playerStartHandCards, i);
+                            playerStartHandCards= GameDesk.removeCardElement(playerStartHandCards, i);
                             isPlayerStand=true;
                             isPlayerPlay=true;
                             done3=true;
@@ -412,6 +432,8 @@ public class Gameplay {
              isPlayerPlay = true;
         }
        } while (!isPlayerPlay);
-       }   
+       } 
+        }
+        
     }
 }
