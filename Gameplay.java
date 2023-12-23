@@ -30,6 +30,7 @@ public class Gameplay {
         Boolean isMoveTrue = false;
         Boolean isPlayerStand = false;
         Boolean isComputerStand = false;
+        Boolean isSpecialCardPlayed = false;
         Boolean isBlueJack = false;
         String[] computerSpecialCards = new String[2];
         int gameCount = 1;
@@ -81,9 +82,14 @@ public class Gameplay {
             list2 = GameDesk.removeElement(list2, y);
         }
    
+        
         do{
-            System.out.print("Please enter your name(max 10 character): ");
-            name = sc.nextLine();
+            try {
+                 System.out.print("Please enter your name(max 10 character): ");
+                 name = sc.nextLine();
+            } catch (Exception e) {
+                
+            }   
         }while(name.length()>10);
         System.out.println("Welcome the game "+ name + "Game started...You draw your first card.");
         System.out.println("----------Scoreboard----------\n"+"     Computer: " + String.valueOf(computerWin) + ", " + name + ": " + String.valueOf(playerWin) + "\n----------Scoreboard----------\n" );
@@ -92,70 +98,97 @@ public class Gameplay {
         //gameplay
        while (!isRoundFinished) {
         if(isPlayerStand!= true && playerTotal>20){
-            System.out.println("computer winned"+ gameCount +". tour!");
+            System.out.println("computer winned "+ gameCount +". tour!");
                 computerWin++;
                  gameCount++;
                  isRoundFinished=true;
                  break;
+        }else{
+            isPlayerPlay =false;
         }
         if(isComputerStand!=true&&computerTotal>20){
                 System.out.println(name + " winned " + gameCount +". tour!!!");
                 playerWin++;
                  gameCount++;
+                 break;
         }
         if(isComputerStand==true && isPlayerStand==true){
             if(computerTotal>playerTotal){
-                 System.out.println("computer winned"+ gameCount +". tour!");
+                 System.out.println("computer winned "+ gameCount +". tour!");
                 computerWin++;
                  gameCount++;
+                 break;
             }else if(playerTotal>computerTotal){
                  System.out.println(name + " winned " + gameCount +". tour!!!");
                 playerWin++;
                  gameCount++;
+                 break;
             }else{
                 System.out.println(gameCount +". tour end tied!");
                 gameCount++;
+                break;
             }
-            isRoundFinished = true;
-            break;
         }
         do {
             while (!isComputerPlay) {
+                if(isPlayerStand){
+
+                }
+                if(playerTotal>20){
+                    break;
+                }
                 computerBoard += gameDesk[cardCount].color + " "+ gameDesk[cardCount].sign + gameDesk[cardCount].value + " ";
             computerTotal += gameDesk[cardCount].value;
             String computerMove = Computer.computerMove(computerTotal, isPlayerStand, playerTotal, gameDesk[cardCount], computerStartHandCards);
             cardCount++;
-            if(computerMove == "endTurn"){
+            if("endTurn".equals(computerMove)){
                 isComputerPlay = true;
-            }else if(computerMove=="stand"){
+                break;
+            }else if("stand".equals(computerMove)){
                 isComputerStand = true;
                 isComputerPlay = true;
+                break;
             }else{
                 for(int i = 0;i<computerStartHandCards.length;i++){
                     if(Integer.toString(i)==computerMove){
                         if(computerStartHandCards[i].sign=="-"){
                            computerTotal -=  computerStartHandCards[i].value;
+                           GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
+                           GameDesk.removeCardElement(computerStartHandCards, i);
                             break;
                            }else if(computerStartHandCards[i].sign=="+"){
                            computerTotal +=  computerStartHandCards[i].value;
+                           GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
+                           GameDesk.removeCardElement(computerStartHandCards, i);
                             break;
                            }else if(computerStartHandCards[i].sign=="+/-"){
                            computerTotal -=  (gameDesk[cardCount-1].value)*2;
+                           GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
+                           GameDesk.removeCardElement(computerStartHandCards, i);
+                            computerBoard = GameDesk.changeSignBoard(computerBoard);
                             break;
                            }else if(computerStartHandCards[i].sign=="x2"){
                             computerTotal +=  gameDesk[cardCount-1].value;
+                            GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
+                            GameDesk.removeCardElement(computerStartHandCards, i);
                             break;
                            }
                     }
                 }
                 isComputerPlay = true;
+                break;
             }
             }
-        if(isPlayerStand!=true&&isComputerStand != true){
+        if(isPlayerStand!=true){
             playerTotal += gameDesk[cardCount].value;
         playerBoard += gameDesk[cardCount].color + " " + gameDesk[cardCount].sign + gameDesk[cardCount].value + " ";
         cardCount++;
         System.out.println("Computer Hand: " + computerHand + "\nComputer Board: " + computerBoard + "\n------------------------------------------------\n" + name + "'s Board: " + playerBoard + "\n" + name + "'s Hand: " + playerHand);
+        if(playerTotal>20){
+                    isComputerPlay = true;
+                    isPlayerPlay = true;
+                    break;
+                }
              if(isComputerStand==false){
              boolean done = false;
         while (!done) {
@@ -163,14 +196,25 @@ public class Gameplay {
             int playerMove = sc.nextInt();
             try {
                 if(playerMove==1){
+                     if(playerTotal>20){
+                    isComputerPlay = true;
+                    isPlayerPlay = false;
+                    break;
+                }else{
                     isComputerPlay = false;
                     isPlayerPlay = true;
+                }
                     done = true;
                 }else if(playerMove==2){
                     boolean done2 = false;
                     while (!done2) {
                       for(int i = 0;i<playerStartHandCards.length;i++){
-                        System.out.println((i+1)+"-"+playerStartHandCards[i].color + " " +playerStartHandCards[i].sign + playerStartHandCards[i].value + " " );
+                        if(playerStartHandCards[i].sign=="-"||playerStartHandCards[i].sign=="+"){
+                            System.out.println((i+1)+"-"+playerStartHandCards[i].color + " " +playerStartHandCards[i].sign + playerStartHandCards[i].value );
+                        }else{
+                            System.out.println((i+1)+"-" +playerStartHandCards[i].sign  );
+                        }
+                        
                     }
                     System.out.print("Choose a special card: ");
                     int playerSpecialMove = sc.nextInt();
@@ -185,50 +229,58 @@ public class Gameplay {
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
+                            GameDesk.removeCardElement(playerStartHandCards, i);
                             isComputerPlay = false;
                             isPlayerPlay=true;
-                            done=true;
-                            done2=true;
+                              done = true;
+                            done2 = true; 
                             done3=true;
-                            break;
+                   
                            }else if(playerStartHandCards[i].sign=="+"){
                             playerTotal += playerStartHandCards[i].value;
                             playerBoard += playerStartHandCards[i].color + " " + "+" + playerStartHandCards[i].value + " ";
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
+                              GameDesk.removeCardElement(playerStartHandCards, i);
                             isComputerPlay = false;
                             isPlayerPlay=true;
-                            done=true;
-                            done2=true;
+                              done = true;
+                            done2 = true; 
                             done3=true;
-                            break;
+                          
                            }else if(playerStartHandCards[i].sign=="+/-"){
                             playerTotal -= gameDesk[cardCount-1].value;
+                            playerBoard = GameDesk.changeSignBoard(playerBoard);
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
+                            GameDesk.removeCardElement(playerStartHandCards, i);
                             isComputerPlay = false;
                             isPlayerPlay=true;
-                            done=true;
-                            done2=true;
+                              done = true;
+                            done2 = true; 
                             done3=true;
-                            break;
+                           
                            }else if(playerStartHandCards[i].sign=="x2"){
                             playerTotal += gameDesk[cardCount-1].value;
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
+                             GameDesk.removeCardElement(playerStartHandCards, i);
                             isComputerPlay = false;
                             isPlayerPlay=true;
-                            done=true;
-                            done2=true;
+                              done = true;
+                            done2 = true; 
                             done3=true;
-                            break;
+                            
                            }
-                                }  
+                             }  
+                           break;
                             }
+                                                 
                         }
+                          
                     } catch (Exception e) {
                        sc.nextInt();
                     }   
@@ -239,25 +291,40 @@ public class Gameplay {
                     isPlayerStand=true;
                     isPlayerPlay = true;
                     done = true;
+                    break;
                 }
+                break;
             } catch (Exception e) {
                 System.out.println("Enter number between 1-3");
             }
+            break;
         }
         }else{
-            boolean done = false;
+             boolean done = false;
         while (!done) {
-            System.out.print("1-Draw Card\n2-Use Special Card\n3-Stand\nEnter your move: ");
+            System.out.print("1-End Turn\n2-Use Special Card\n3-Stand\nEnter your move: ");
             int playerMove = sc.nextInt();
             try {
                 if(playerMove==1){
+                     if(playerTotal>20){
+                    isComputerPlay = true;
+                    isPlayerPlay = false;
+                    break;
+                }else{
+                    isComputerPlay = false;
                     isPlayerPlay = true;
+                }
                     done = true;
                 }else if(playerMove==2){
                     boolean done2 = false;
                     while (!done2) {
                       for(int i = 0;i<playerStartHandCards.length;i++){
-                        System.out.println((i+1)+"-"+playerStartHandCards[i].color + " " +playerStartHandCards[i].sign + playerStartHandCards[i].value + " " );
+                        if(playerStartHandCards[i].sign=="-"||playerStartHandCards[i].sign=="+"){
+                            System.out.println((i+1)+"-"+playerStartHandCards[i].color + " " +playerStartHandCards[i].sign + playerStartHandCards[i].value );
+                        }else{
+                            System.out.println((i+1)+"-" +playerStartHandCards[i].sign  );
+                        }
+                        
                     }
                     System.out.print("Choose a special card: ");
                     int playerSpecialMove = sc.nextInt();
@@ -272,10 +339,9 @@ public class Gameplay {
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
+                            GameDesk.removeCardElement(playerStartHandCards, i);
                             isPlayerStand=true;
                             isPlayerPlay=true;
-                            done=true;
-                            done2=true;
                             done3=true;
                             break;
                            }else if(playerStartHandCards[i].sign=="+"){
@@ -284,47 +350,54 @@ public class Gameplay {
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
-                            isPlayerStand=true;
+                              GameDesk.removeCardElement(playerStartHandCards, i);
+                           isPlayerStand=true;
                             isPlayerPlay=true;
-                            done=true;
-                            done2=true;
                             done3=true;
-                            break;
+                             break;
                            }else if(playerStartHandCards[i].sign=="+/-"){
                             playerTotal -= gameDesk[cardCount-1].value;
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
+                              GameDesk.removeCardElement(playerStartHandCards, i);
+                               playerBoard = GameDesk.changeSignBoard(playerBoard);
                             isPlayerStand=true;
                             isPlayerPlay=true;
-                            done=true;
-                            done2=true;
                             done3=true;
-                            break;
+                             break;
                            }else if(playerStartHandCards[i].sign=="x2"){
                             playerTotal += gameDesk[cardCount-1].value;
                             playerHandCards[i].color="";
                             playerHandCards[i].value=0;
                             playerHandCards[i].sign="";
+                             GameDesk.removeCardElement(playerStartHandCards, i);
                             isPlayerStand=true;
                             isPlayerPlay=true;
-                            done=true;
-                            done2=true;
                             done3=true;
-                            break;
+                             break;
                            }
-                                }  
+                             }  
+                           break;
                             }
+                            isComputerPlay = true;
+                            isPlayerPlay=true;
+                            done = true;
+                            done2 = true;    
+                                                 
                         }
+                          break;
                     } catch (Exception e) {
                        sc.nextInt();
                     }   
                     }
 
                 }else if(playerMove==3){
+                    isComputerPlay = false;
                     isPlayerStand=true;
                     isPlayerPlay = true;
                     done = true;
+                    break;
                 }
             } catch (Exception e) {
                 System.out.println("Enter number between 1-3");
@@ -334,15 +407,11 @@ public class Gameplay {
         
         }else{
              System.out.println("Computer Hand: " + computerHand + "\nComputer Board: " + computerBoard + "\n------------------------------------------------\n" + name + "'s Board: " + playerBoard + "\n" + name + "'s Hand: " + playerHand);
-             break;
+             isComputerPlay = false;
+             isPlayerPlay = true;
+             isPlayerPlay = true;
         }
        } while (!isPlayerPlay);
-       }
-       
-    
-        
-      
-       
-        
+       }   
     }
 }
