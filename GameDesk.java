@@ -78,7 +78,12 @@ public class GameDesk {
             else if(i>index){
                 newArray[i-1] = array[i];
              }
-}
+    }
         return newArray;
+    }
+    public static String replaceCharAtIndex(String original, int index, char replacement) {
+        char[] chars = original.toCharArray();
+        chars[index] = replacement;
+        return new String(chars);
     }
 }
