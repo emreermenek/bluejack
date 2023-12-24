@@ -4,12 +4,10 @@ import java.util.Random;
 public class Gameplay {
     public static void startGame(){
         Card[] gameDesk = GameDesk.shuffleGameDesk();
-        Card[] extraCardsPlayer = GameDesk.createExtraCards();
-        Card[] extraCardsComputer = GameDesk.createExtraCards();
         Scanner sc = new Scanner(System.in);
         Random random = new Random();
-        Card[] playerHandCards = new Card[10];
-        Card[] computerHandCards = new Card[10];
+        Card[] playerHandCards = GameDesk.createHandCards(gameDesk);
+        Card[] computerHandCards = GameDesk.createHandCards(gameDesk);
          Card[] playerStartHandCards = new Card[4];
         Card[] computerStartHandCards = new Card[4];
         System.out.println("Welcome to bluejack game!!!");
@@ -29,35 +27,11 @@ public class Gameplay {
         Boolean isRoundFinished = false;
         Boolean isPlayerStand = false;
         Boolean isComputerStand = false;
-        Boolean isBluejack = false;
-        String[] computerColors = new String[7];
-        String[] playerColors = new String[7];
+        Boolean isComputerBluejack = false;
+        Boolean isPlayerBluejack = false;
+        String computerColors ="";
+        String playerColors = "";
         int gameCount = 1;
-        for(int i = 0;i<5;i++){
-            playerHandCards[i] = gameDesk[i];
-        }
-        int a = 5;
-        for(int i = 0;i<3;i++){
-            playerHandCards[a] = extraCardsPlayer[i];
-            a++;
-        }
-        for(int i = 0; i<2;i++){
-            playerHandCards[a] = GameDesk.specialCard();
-            a++;
-        }
-        int j = 0;
-        for(int i = 39;i>34;i--){
-            computerHandCards[j] = gameDesk[i];
-            j++;
-        }
-         for(int i = 0;i<3;i++){
-            computerHandCards[j] = extraCardsComputer[i];
-            j++;
-        }
-          for(int i = 0; i<2;i++){
-            computerHandCards[j] = GameDesk.specialCard();
-            j++;
-        }
         int[] list = {0,1,2,3,4,5,6,7,8,9};
         int o = 10;
         for(int i = 0; i<4; i++){
@@ -71,7 +45,6 @@ public class Gameplay {
                 playerHand += playerStartHandCards[i].color + " " + playerStartHandCards[i].sign + playerStartHandCards[i].value + " ";
             }
         }
-        
          o = 10;
         int[] list2 = {0,1,2,3,4,5,6,7,8,9};
          for(int i = 0; i<4; i++){
@@ -95,6 +68,15 @@ public class Gameplay {
         
         //gameplay
         while (!isGameEnd) {
+            System.out.println("----------Scoreboard----------\n"+"     Computer: " + String.valueOf(computerWin) + ", " + name + ": " + String.valueOf(playerWin) + "\n----------Scoreboard----------\n" );
+            if(isComputerBluejack==true){
+                System.out.println("COMPUTER BLUEJACK AND WIN!!!");
+                break;
+            }
+             if(isPlayerBluejack==true){
+                System.out.println("YOU BLUEJACK AND WIN!!!");
+                break;
+            }
             if(playerWin==3){
                 System.out.println("YOU WIN!!!");
                 break;
@@ -112,9 +94,17 @@ public class Gameplay {
             isRoundFinished = false;
             isPlayerStand = false;
             isComputerStand = false;
-            System.out.println("----------Scoreboard----------\n"+"     Computer: " + String.valueOf(computerWin) + ", " + name + ": " + String.valueOf(playerWin) + "\n----------Scoreboard----------\n" );
-
         while (!isRoundFinished) {
+        if(computerTotal==20 && GameDesk.containsOnlyBlue(computerColors)){
+            isComputerBluejack = true;
+            computerWin=3;
+            break;
+        }   
+        if(playerTotal==20 && GameDesk.containsOnlyBlue(playerColors)){
+            isPlayerBluejack = true;
+            playerWin=3;
+            break;
+        }     
         if(isPlayerStand!= true && playerTotal>20){
             System.out.println("computer winned "+ gameCount +". tour!");
                 computerWin++;
@@ -154,6 +144,7 @@ public class Gameplay {
                 }
             computerBoard += gameDesk[cardCount].color + " "+ gameDesk[cardCount].sign + gameDesk[cardCount].value + " ";
             computerTotal += gameDesk[cardCount].value;
+            computerColors += gameDesk[cardCount].color;
             String computerMove = Computer.computerMove(computerTotal, isPlayerStand, playerTotal, gameDesk[cardCount], computerStartHandCards);
             cardCount++;
             if("endTurn".equals(computerMove)){
@@ -167,11 +158,13 @@ public class Gameplay {
                 for(int i = 0;i<computerStartHandCards.length;i++){
                     if(Integer.toString(i)==computerMove){
                         if(computerStartHandCards[i].sign=="-"){
+                            computerColors += computerStartHandCards[i].color;
                            computerTotal -=  computerStartHandCards[i].value;
                             computerHand=GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
                           computerStartHandCards=GameDesk.removeCardElement(computerStartHandCards, i);
                             break;
                            }else if(computerStartHandCards[i].sign=="+"){
+                             computerColors += computerStartHandCards[i].color;
                            computerTotal +=  computerStartHandCards[i].value;
                            computerHand=GameDesk.replaceCharAtIndex(computerHand, i*2, '0');
                            computerStartHandCards=GameDesk.removeCardElement(computerStartHandCards, i);
@@ -197,6 +190,7 @@ public class Gameplay {
         if(isPlayerStand!=true){
             playerTotal += gameDesk[cardCount].value;
         playerBoard += gameDesk[cardCount].color + " " + gameDesk[cardCount].sign + gameDesk[cardCount].value + " ";
+        computerColors += gameDesk[cardCount].color;
         cardCount++;
         System.out.println("Computer Hand: " + computerHand + "\nComputer Board: " + computerBoard + "\n------------------------------------------------\n" + name + "'s Board: " + playerBoard + "\n" + name + "'s Hand: " + playerHand);
         if(playerTotal>20){
@@ -221,6 +215,9 @@ public class Gameplay {
                 }
                     done = true;
                 }else if(playerMove==2){
+                    if(playerStartHandCards.length == 0){
+                        break;
+                    }
                     boolean done2 = false;
                     while (!done2) {
                       for(int i = 0;i<playerStartHandCards.length;i++){
@@ -228,8 +225,7 @@ public class Gameplay {
                             System.out.println((i+1)+"-"+playerStartHandCards[i].color + " " +playerStartHandCards[i].sign + playerStartHandCards[i].value );
                         }else{
                             System.out.println((i+1)+"-" +playerStartHandCards[i].sign  );
-                        }
-                        
+                        }  
                     }
                     try {
                         System.out.print("Choose a special card: ");
@@ -240,6 +236,7 @@ public class Gameplay {
                                 if(i == playerSpecialMove-1){
                                     playerHand = GameDesk.removeHandCard(playerStartHandCards, playerHand, i);
                             if(playerStartHandCards[i].sign=="-"){
+                                playerColors += playerStartHandCards[i].color;
                              playerTotal -= playerStartHandCards[i].value;
                             playerBoard += playerStartHandCards[i].color + " " + "-" + playerStartHandCards[i].value + " ";
                             playerHandCards[i].color="";
@@ -253,6 +250,7 @@ public class Gameplay {
                             done3=true;
                    
                            }else if(playerStartHandCards[i].sign=="+"){
+                            playerColors += playerStartHandCards[i].color;
                             playerTotal += playerStartHandCards[i].value;
                             playerBoard += playerStartHandCards[i].color + " " + "+" + playerStartHandCards[i].value + " ";
                             playerHandCards[i].color="";
@@ -332,6 +330,9 @@ public class Gameplay {
                 }
                     done = true;
                 }else if(playerMove==2){
+                    if(playerStartHandCards.length == 0){
+                        break;
+                    }
                     boolean done2 = false;
                     while (!done2) {
                       for(int i = 0;i<playerStartHandCards.length;i++){
@@ -340,7 +341,6 @@ public class Gameplay {
                         }else{
                             System.out.println((i+1)+"-" +playerStartHandCards[i].sign  );
                         }
-                        
                     }
                     System.out.print("Choose a special card: ");
                     int playerSpecialMove = sc.nextInt();
@@ -349,8 +349,9 @@ public class Gameplay {
                         for(int i = 0;i<playerStartHandCards.length;i++){
                             while (!done3) {
                                 if(i == playerSpecialMove-1){
-                                      playerHand = GameDesk.removeHandCard(playerStartHandCards, playerHand, i);
+                                    playerHand = GameDesk.removeHandCard(playerStartHandCards, playerHand, i);
                             if(playerStartHandCards[i].sign=="-"){
+                                playerColors += playerStartHandCards[i].color;
                              playerTotal -= playerStartHandCards[i].value;
                             playerBoard += playerStartHandCards[i].color + " " + "-" + playerStartHandCards[i].value + " ";
                             playerHandCards[i].color="";
@@ -362,6 +363,7 @@ public class Gameplay {
                             done3=true;
                             break;
                            }else if(playerStartHandCards[i].sign=="+"){
+                            playerColors += playerStartHandCards[i].color;
                             playerTotal += playerStartHandCards[i].value;
                             playerBoard += playerStartHandCards[i].color + " " + "+" + playerStartHandCards[i].value + " ";
                             playerHandCards[i].color="";
@@ -432,6 +434,6 @@ public class Gameplay {
        } while (!isPlayerPlay);
        } 
         }
-        
+        sc.close();
     }
 }

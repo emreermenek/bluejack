@@ -3,25 +3,15 @@ import java.util.Random;
 public class GameDesk {
     public static Card[] createGameDesk(){
         Card[] deck = new Card[40];
-        int j = 1;
-        int x = 1;
-        int y = 1;
-        int z = 1;
         for(int i = 0;i<40;i++){
             if(i<10){
-                deck[i] = new Card("green",j,"+");
-                j++;
+                deck[i] = new Card("green",i+1,"+");
             }else if(i>9&&i<20){
-                deck[i] = new Card("yellow",x,"+");
-                x++;
+                deck[i] = new Card("yellow",i-9,"+");
             }else if(i>19&&i<30){
-               
-                deck[i] = new Card("red",y,"+");
-                y++;
+                deck[i] = new Card("red",i-19,"+");
             }else if(i>29){
-                
-                deck[i] = new Card("blue",z,"+");
-                z++;
+                deck[i] = new Card("blue",i-29,"+");
             }
         }
         return deck;
@@ -107,16 +97,32 @@ public class GameDesk {
     }
 
     public static String removeHandCard(Card[] playerStartHandCards,String hand,int i){
-        String target = "";
-        if(playerStartHandCards[i].sign == "+" || playerStartHandCards[i].sign == "-"){
+        String target =  "";
+        if("+".equals(playerStartHandCards[i].sign) || "-".equals(playerStartHandCards[i].sign)){
             target = playerStartHandCards[i].color + " " + playerStartHandCards[i].sign + playerStartHandCards[i].value;
         }else{
-            if(playerStartHandCards[i].sign == "+/-"){
                 target = playerStartHandCards[i].sign;
-            }else{
-                target = playerStartHandCards[i].sign;
-            }
+               target = playerStartHandCards[i].sign;
         }
-        return hand.replaceAll(target, "");
+        hand = hand.replace(target, "");
+        return hand;
+    }
+    public static boolean containsOnlyBlue(String input) {
+        String result = input.replaceAll("blue", "");
+        return result.isEmpty();
+    }
+    public static Card[] createHandCards(Card[] gameDesk){
+        Card[] handCards = new Card[10];
+        Card[] extraCards = GameDesk.createExtraCards();
+        for(int i = 0;i<5;i++){
+            handCards[i] = gameDesk[i];
+        }
+        for(int i = 0;i<3;i++){
+            handCards[i+5] = extraCards[i];
+        }
+        for(int i = 0; i<2;i++){
+            handCards[i+8] = GameDesk.specialCard();
+        }
+        return handCards;
     }
 }
