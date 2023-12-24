@@ -125,4 +125,15 @@ public class GameDesk {
         }
         return handCards;
     }
+    public static String doubledValueOfNumber(String hand) {
+        String[] parts = hand.split(" ");
+        int lastNumber = Integer.parseInt(parts[parts.length - 1]);
+        int doubledNumber = lastNumber * 2;
+
+        parts[parts.length - 1] = String.valueOf(doubledNumber);
+    
+        String output = String.join(" ", parts);
+        
+        return output;
+    }
 }
