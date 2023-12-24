@@ -32,6 +32,7 @@ public class Gameplay {
         String computerColors ="";
         String playerColors = "";
         int gameCount = 1;
+        Boolean doYouWantToPlay = false;
         int[] list = {0,1,2,3,4,5,6,7,8,9};
         int o = 10;
         for(int i = 0; i<4; i++){
@@ -53,20 +54,29 @@ public class Gameplay {
             o--;
             list2 = GameDesk.removeElement(list2, y);
         }
-   
-        //name
-        do{
+        int playOrNot = 1;
+        while (!doYouWantToPlay) {
+           boolean checkError = false;
+           while (!checkError) {
+             try {
+                 System.out.print("Do you want to play bluejack?\n1-Yes\n2-No\nEnter your choice: ");
+                playOrNot = sc.nextInt();
+                checkError = true;
+            } catch (Exception e) {
+                sc.nextLine();
+            }
+           }
+           sc.nextLine();
+           if(playOrNot==1){
+             do{
             try {
                  System.out.print("Please enter your name(max 10 character): ");
                  name = sc.nextLine();
             } catch (Exception e) {
-                
+                sc.nextLine();
             }   
         }while(name.length()>10);
-        System.out.println("Welcome the game "+ name + "Game started...You draw your first card.");
-       
-        
-        //gameplay
+        System.out.println("Welcome the game "+ name + "\nGame started...You draw your first card.");
         while (!isGameEnd) {
             System.out.println("----------Scoreboard----------\n"+"     Computer: " + String.valueOf(computerWin) + ", " + name + ": " + String.valueOf(playerWin) + "\n----------Scoreboard----------\n" );
             if(isComputerBluejack==true){
@@ -434,6 +444,14 @@ public class Gameplay {
        } while (!isPlayerPlay);
        } 
         }
+           }else if(playOrNot == 2){
+                break;
+           }else{
+            continue;
+           }
+           
+        }
+        
         sc.close();
     }
 }
